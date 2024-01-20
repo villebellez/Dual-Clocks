@@ -7,7 +7,13 @@
 #include <stdexcept>
 using namespace std;
 
-void validateTime(string hours, string minutes, string seconds);
+struct Time {
+    int hrs;
+    int mins;
+    int secs;
+};
+
+void validateTime(int hrs, int mins, int secs);
 
 void displayMenu() {
 
@@ -42,7 +48,7 @@ void displayClock(string hour24 = "00", string hour12 = "12", string min = "00",
     displayMenu();
 }
 
-void inputTime() {
+ Time inputTime() {
     string hours, minutes, seconds;
     string userTime;
 
@@ -54,12 +60,6 @@ void inputTime() {
     getline(iss, minutes, ':');
     getline(iss, seconds, ':');
 
-    validateTime(hours, minutes, seconds);
-
-}
-
-void validateTime(string hours, string minutes, string seconds) {
-    string userTime;
     string time[] = { hours, minutes, seconds };
 
     for (int i = 0; i < 3; i++) {
@@ -72,6 +72,18 @@ void validateTime(string hours, string minutes, string seconds) {
     int mins = stoi(time[1]);
     int secs = stoi(time[2]);
 
+    validateTime(hrs, mins, secs);
+
+    Time t;
+    t.hrs = hrs;
+    t.mins = mins;
+    t.secs = secs;
+
+    return t;
+}
+
+void validateTime(int hrs, int mins, int secs) {
+
     try {
         if (hrs > 23 || mins > 59 || secs > 59) {
             throw invalid_argument("Invalid time format, please try again.\n");
@@ -81,12 +93,41 @@ void validateTime(string hours, string minutes, string seconds) {
         cout << e.what() << endl;
         inputTime();
     }
+
 }
 
+void Clock12(int hours, int minutes, int seconds) {
+    int hr12, min12, sec12;
+    bool isAM;
+
+    if (hours < 12 || hours == 24) {
+        isAM = true;
+    }
+    else {
+        isAM = false;
+    }
+
+    hr12 = hours % 12;
+    min12 = minutes;
+    sec12 = seconds;
+
+    // TESTING
+    cout << setw(2) << setfill('0') << hr12 << ":"; 
+    cout << setw(2) << setfill('0') << min12 << ":"; 
+    cout << setw(2) << setfill('0') << sec12 << " ";
+    
+    if (isAM) {
+        cout << "AM" << endl;
+    }
+    else {
+        cout << "PM" << endl;
+    }
+}
 
 int main() {
+    Time t = inputTime();
 
-    inputTime();
+    Clock12(t.hrs, t.mins, t.secs);
 
     displayClock();
 
