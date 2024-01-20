@@ -29,18 +29,32 @@ void displayMenu() {
 
 }
 
-void displayClock(string hour24 = "00", string hour12 = "12", string min = "00", string sec = "00", string ampm = "AM") {
-   
+void displayClock(int hour24 = 0, int hour12 = 12, int min = 0, int sec = 0, bool isAM = true) {
+
     // Testing Display
     cout << setfill('*') << setw(26) << "";
     cout << setfill(' ') << setw(10) << "";
     cout << setfill('*') << setw(26) << "" << endl;
+
     cout << "*     12-Hour Clock      *";
     cout << setfill(' ') << setw(10) << "";
     cout << "*      24-Hour Clock     *" << endl;
-    cout << "*      " << hour12 << ":" << min << ":" << sec << " " << ampm << "       *";
-    cout << setfill(' ') << setw(10) << "";
-    cout << "*        " << hour24 << ":" << min << ":" << sec << " " << "       *" << endl;
+
+    cout << "*      ";
+    cout << setw(2) << setfill('0') << hour12 << ":";
+    cout << setw(2) << setfill('0') << min << ":";
+    cout << setw(2) << setfill('0') << sec << " ";
+    if (isAM) {
+        cout << "AM";
+    }
+    else {
+        cout << "PM";
+    }
+    cout << "       *" << "          " << "*        ";
+    cout << setw(2) << setfill('0') << hour24 << ":";
+    cout << setw(2) << setfill('0') << min << ":";
+    cout << setw(2) << setfill('0') << sec << "        *" << endl;
+
     cout << setfill('*') << setw(26) << "";
     cout << setfill(' ') << setw(10) << "";
     cout << setfill('*') << setw(26) << "" << endl;
@@ -94,42 +108,28 @@ void validateTime(int hrs, int mins, int secs) {
         inputTime();
     }
 
+    // TODO: Somehow first incorrect time gets passed even after a correct time is input
+
 }
 
-void Clock12(int hours, int minutes, int seconds) {
-    int hr12, min12, sec12;
+int main() {
+    int hour24;
+    int hour12;
     bool isAM;
 
-    if (hours < 12 || hours == 24) {
+    Time t = inputTime();
+    
+    hour24 = t.hrs;
+    hour12 = t.hrs % 12;
+
+    if (hour24 < 12 || hour24 == 24) {
         isAM = true;
     }
     else {
         isAM = false;
     }
 
-    hr12 = hours % 12;
-    min12 = minutes;
-    sec12 = seconds;
-
-    // TESTING
-    cout << setw(2) << setfill('0') << hr12 << ":"; 
-    cout << setw(2) << setfill('0') << min12 << ":"; 
-    cout << setw(2) << setfill('0') << sec12 << " ";
-    
-    if (isAM) {
-        cout << "AM" << endl;
-    }
-    else {
-        cout << "PM" << endl;
-    }
-}
-
-int main() {
-    Time t = inputTime();
-
-    Clock12(t.hrs, t.mins, t.secs);
-
-    displayClock();
+    displayClock(hour24, hour12, t.mins, t.secs, isAM);
 
     return 0;
 }
