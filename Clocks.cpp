@@ -13,7 +13,8 @@ struct Time {
     int secs;
 };
 
-void validateTime(int hrs, int mins, int secs);
+bool validateTime(int hrs, int mins, int secs);
+void displayMenu(int hour, int minutes, int seconds);
 
 void displayClock(int hour24, int min, int sec) {
     bool isAM;
@@ -37,6 +38,8 @@ void displayClock(int hour24, int min, int sec) {
             hour12 = hour24;
         }
     }
+
+    cout << endl;
     cout << setfill('*') << setw(26) << "";
     cout << setfill(' ') << setw(10) << "";
     cout << setfill('*') << setw(26) << "" << endl;
@@ -63,6 +66,8 @@ void displayClock(int hour24, int min, int sec) {
     cout << setfill('*') << setw(26) << "";
     cout << setfill(' ') << setw(10) << "";
     cout << setfill('*') << setw(26) << "" << endl;
+
+    displayMenu(hour24, min, sec);
 
 }
 
@@ -113,31 +118,36 @@ void displayMenu(int hour, int minutes, int seconds) {
 
 }
 
- Time inputTime() {
+Time inputTime() {
     string hours, minutes, seconds;
     string userTime;
+    bool temp = true;
+    int hrs, mins, secs;
 
-    cout << "Please enter the initial time in 24-Hour format (hour/min/sec - 00:00:00)" << endl;
-    getline(cin, userTime);
+    do
+    {
+        cout << "Please enter the initial time in 24-Hour format (hour/min/sec - 00:00:00)" << endl;
+        getline(cin, userTime);
 
-    istringstream iss(userTime);
-    getline(iss, hours, ':');
-    getline(iss, minutes, ':');
-    getline(iss, seconds, ':');
+        istringstream iss(userTime);
+        getline(iss, hours, ':');
+        getline(iss, minutes, ':');
+        getline(iss, seconds, ':');
 
-    string time[] = { hours, minutes, seconds };
+        string time[] = { hours, minutes, seconds };
 
-    for (int i = 0; i < 3; i++) {
-        if (time[i][0] == '0') {
-            time[i] = time[i].substr(1);
+        for (int i = 0; i < 3; i++) {
+            if (time[i][0] == '0') {
+                time[i] = time[i].substr(1);
+            }
         }
-    }
 
-    int hrs = stoi(time[0]);
-    int mins = stoi(time[1]);
-    int secs = stoi(time[2]);
+        hrs = stoi(time[0]);
+        mins = stoi(time[1]);
+        secs = stoi(time[2]);
 
-    validateTime(hrs, mins, secs);
+        temp = validateTime(hrs, mins, secs);
+    } while (temp == false);
 
     Time t;
     t.hrs = hrs;
@@ -147,7 +157,7 @@ void displayMenu(int hour, int minutes, int seconds) {
     return t;
 }
 
-void validateTime(int hrs, int mins, int secs) {
+bool validateTime(int hrs, int mins, int secs) {
 
     try {
         if (hrs > 23 || mins > 59 || secs > 59) {
@@ -156,20 +166,17 @@ void validateTime(int hrs, int mins, int secs) {
     }
     catch (invalid_argument& e) {
         cout << e.what() << endl;
-        inputTime();
+        return false;
     }
-
-    // TODO: Somehow first incorrect time gets passed to display even after a correct time is input
+    return true;
 
 }
 
 int main() {
 
     Time t = inputTime();
-    
-    displayClock(t.hrs, t.mins, t.secs);
 
-    displayMenu(t.hrs, t.mins, t.secs);
+    displayClock(t.hrs, t.mins, t.secs);
 
     return 0;
 }
