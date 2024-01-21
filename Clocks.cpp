@@ -15,23 +15,28 @@ struct Time {
 
 void validateTime(int hrs, int mins, int secs);
 
-void displayMenu() {
+void displayClock(int hour24, int min, int sec) {
+    bool isAM;
+    int hour12;
 
-    // TODO: Make functional
-    cout << endl;
-    cout << "MENU OPTIONS:" << endl;
-    cout << setfill('*') << setw(26) << "" << endl;
-    cout << "* 1 - Add One Hour       *" << endl;
-    cout << "* 2 - Add One Minute     *" << endl;
-    cout << "* 3 - Add One Second     *" << endl;
-    cout << "* 4 - Exit Program       *" << endl;
-    cout << setfill('*') << setw(26) << "" << endl;
-
-}
-
-void displayClock(int hour24 = 0, int hour12 = 12, int min = 0, int sec = 0, bool isAM = true) {
-
-    // Testing Display
+    if (hour24 < 12 || hour24 == 24) {
+        isAM = true;
+        if (hour24 % 12 == 0) {
+            hour12 = 12;
+        }
+        else {
+            hour12 = hour24;
+        }
+    }
+    else {
+        isAM = false;
+        if (hour24 % 12 != 0) {
+            hour12 = hour24 % 12;
+        }
+        else {
+            hour12 = hour24;
+        }
+    }
     cout << setfill('*') << setw(26) << "";
     cout << setfill(' ') << setw(10) << "";
     cout << setfill('*') << setw(26) << "" << endl;
@@ -59,7 +64,53 @@ void displayClock(int hour24 = 0, int hour12 = 12, int min = 0, int sec = 0, boo
     cout << setfill(' ') << setw(10) << "";
     cout << setfill('*') << setw(26) << "" << endl;
 
-    displayMenu();
+}
+
+void displayMenu(int hour, int minutes, int seconds) {
+    string menuChoice;
+
+    cout << endl;
+    cout << "MENU OPTIONS:" << endl;
+    cout << setfill('*') << setw(26) << "" << endl;
+    cout << "* 1 - Add One Hour       *" << endl;
+    cout << "* 2 - Add One Minute     *" << endl;
+    cout << "* 3 - Add One Second     *" << endl;
+    cout << "* 4 - Exit Program       *" << endl;
+    cout << setfill('*') << setw(26) << "" << endl;
+    cout << endl;
+
+    getline(cin, menuChoice);
+
+    if (menuChoice == "1") {
+        hour = hour + 1;
+    }
+    else if (menuChoice == "2") {
+        minutes = minutes + 1;
+    }
+    else if (menuChoice == "3") {
+        seconds = seconds + 1;
+    }
+    else if (menuChoice == "4") {
+        cout << "Goodbye!" << endl;
+        exit(0);
+    }
+
+    if (seconds == 60) {
+        seconds = 0;
+        minutes = minutes + 1;
+    }
+
+    if (minutes == 60) {
+        minutes = 0;
+        hour = hour + 1;
+    }
+
+    if (hour == 25) {
+        hour = 0;
+    }
+
+    displayClock(hour, minutes, seconds);
+
 }
 
  Time inputTime() {
@@ -108,28 +159,17 @@ void validateTime(int hrs, int mins, int secs) {
         inputTime();
     }
 
-    // TODO: Somehow first incorrect time gets passed even after a correct time is input
+    // TODO: Somehow first incorrect time gets passed to display even after a correct time is input
 
 }
 
 int main() {
-    int hour24;
-    int hour12;
-    bool isAM;
 
     Time t = inputTime();
     
-    hour24 = t.hrs;
-    hour12 = t.hrs % 12;
+    displayClock(t.hrs, t.mins, t.secs);
 
-    if (hour24 < 12 || hour24 == 24) {
-        isAM = true;
-    }
-    else {
-        isAM = false;
-    }
-
-    displayClock(hour24, hour12, t.mins, t.secs, isAM);
+    displayMenu(t.hrs, t.mins, t.secs);
 
     return 0;
 }
